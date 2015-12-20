@@ -4,6 +4,9 @@
 #include "s3c6410.h"
 #include "jsg.h"
 #include "image.h"
+#include "lcd.h"
+#include "frame.h"
+#include "vic.h"
 
 #define FIN 12000000
 #define LCD_PWR_CON GPNCON_REG
@@ -40,8 +43,6 @@
 
 #define FB_ADDR     (unsigned int *)0x5a000000
 
-//Global Image variable
-Image *img[3] = {(Image *)0};
 
 void lcd_pwr_on(void){
   LCD_PWR_CON  = (LCD_PWR_CON & ~(3<<18)) | (1<<18);
@@ -164,11 +165,29 @@ void drawing(int x, int y){
 
 
   /* Implement your drawing code */
-  for(i=0;i<55;i++)
-    for(j=0;j<100;j++)
-      phy_addr[x+j + (y+i)*800] = jsg[i*100+j];
+  // for(i=0;i<55;i++)
+  //   for(j=0;j<100;j++)
+  //     phy_addr[x+j + (y+i)*800] = jsg[i*100+j];
 
     // Image(unsigned *int[] img, int width, int height, unsigned int *_phy_addr)
+}
+
+void vsync_interrupt_service_routine(void) {
+  static int serviced = 1;
+  unsigned temp;
+
+  temp = VIC0INTENABLE_REG;
+  VIC0INTENCLEAR_REG = 0xffffffff;
+
+  if (S3C_VIDINTCON1 | (1 << 1)) {
+    //printf("%dth service\n", serviced);
+    //ppc_assert();
+    frame_assert();
+    S3C_VIDINTCON1 = 0x2;
+  }
+  serviced++;
+
+  VIC0INTENABLE_REG = temp;
 }
 
 void mango_lcd_init(void){
@@ -179,12 +198,18 @@ void mango_lcd_init(void){
   lcd_pwr_on();
   init_lcd_reg();
 
+  frame_init();
+
+  //VSync Interrupt Setting
+  S3C_VIDINTCON0 |= (3 << 15) | (1 << 12) | 1;
+  VIC0INTENABLE_REG |= (1 << 30);
+  VIC0VECTADDR30 = (unsigned)vsync_interrupt_service_routine;
+
   set_lcd_pos(0, 0, S3CFB_HRES, S3CFB_VRES);
-  for(i=0; i<S3CFB_SIZE; i++)
-    phy_addr[i] = 0x0;
+  // for(i=0; i<S3CFB_SIZE; i++)
+  //   phy_addr[i] = 0xFFFFFF;
 
   set_wincon0_enable();
   set_vidcon0_enable(); 
-  for(i=0;i<3;i++)
-    img[i] = new Image(jsg, 100, 55, i*150, i*10,phy_addr);
+
 }

@@ -1,16 +1,16 @@
-class target: public GameObject
+class Target: public GameObject
 {
 public:
-	target();
-	target::target(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img,, unsigned int* _phy_addr, int _Life);
-	virtual ~target();
+	Target();
+	Target::Target(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img,, unsigned int* _fb, int _Life);
+	virtual ~Target();
 	int getLife();
 
 private:
 	int Life;
 };
 
-class item: public target
+class item: public Target
 {
 public:
 	item();
@@ -19,11 +19,11 @@ public:
 private:
 };
 
-class block:: public target
+class block:: public Target
 {
 public:
 	block();
-	block(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int* _phy_addr, int _Life);
+	block(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int* _fb, int _Life);
 	virtual ~block();
 private:
 };

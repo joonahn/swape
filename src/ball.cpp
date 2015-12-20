@@ -1,13 +1,13 @@
 #include <cstdlib>
 #include "ball.h"
 
-ball::ball(){}
-ball::ball(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int * _phy_addr)
+Ball::Ball(){}
+Ball::Ball(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int * _fb)
 {
-	gameObject::gameObject(_x,_y,_width,_height,_vx,_vy,_img,_phy_addr);
+	gameObject::gameObject(_x,_y,_width,_height,_vx,_vy,_img,_fb);
 }
-ball::~ball(){}
-bool ball::collision(int _type)
+Ball::~Ball(){}
+bool Ball::collision(int _type)
 {
 	switch(_type)
 	{

@@ -5,7 +5,7 @@ GameObject::GameObject()
 	vx=0;
 	vy=0;
 };
-GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _phy_addr)
+GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb)
 {
 	x=_x;
 	y=_y;
@@ -14,13 +14,13 @@ GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, f
 	vx=_vx;
 	vy=_vy;
 	img=_img;
-	phy_addr=_phy_addr;
+	fb=_fb;
 }
 GameObject::~GameObject()
 {
 	for(int i=y;i<y+height;i++)
 		for(int j=x;i<x+width;j++)
-			phy_addr[y*800+x]=0x000000;
+			fb[y*800+x]=0xFFFFFF;
 }
 void GameObject::setX(float _x){x=_x;}
 void GameObject::setY(float _y){y=_y;}
@@ -35,8 +35,12 @@ int GameObject::getW(){return width;}
 int GameObject::getH(){return height;}
 float GameObject::getVx(){return vx;}
 float GameObject::getVy(){return vy;}
-void GameObject::move()
+void GameObject::move(unsigned int *fb)
 {
+	ppx=px;
+	ppy=py;
+	px=x;
+	py=y;
 	x+=vx;
 	y+=vy;
 	int a=(int)x;
@@ -45,8 +49,13 @@ void GameObject::move()
 	if(y<0)y=0;
 	if(x>800-width)x=800-width;
 	if(y>480-height)y=480-height;
-	for(int i=b;i<b+height;i++)
-		for(int j=a;j<a+width;j++)
-			phy_addr[i*800+j]=img[(i-b)*800+(j-a)];
+
+	//background drawing
+	gfx_bitblock_ext(fb,background,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES);
+}
+void GameObject::draw(unsigned int *fb)
+{
+	//image drawing
+	gfx_bitblock(fb,img, S3CFB_HRES, S3CFB_VRES, width, height,(int)x,(int)y);
 }
 bool GameObject::collision(int _type){}

@@ -1,12 +1,12 @@
 #include "arrow.h"
 
-arrow::arrow(){}
-arrow::arrow(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _phy_addr,float _angle)
+Arrow::Arrow(){}
+Arrow::Arrow(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb,float _angle)
 {
-	gameObject::gameObject(_x,_y,_width,_height, _vx, _vy, _img, _phy_addr);
+	gameObject::gameObject(_x,_y,_width,_height, _vx, _vy, _img, _fb);
 	angle=_angle;
 }
-arrow::~arrow(){}
+Arrow::~Arrow(){}
 void setAngle(int _x, int _y)
 {
 	float tangent;

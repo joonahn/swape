@@ -99,6 +99,7 @@ void Controller::detectCollision()
 				}
 			}
 		}
+		checkLife(target[i]);
 	}
 }
 
@@ -134,15 +135,24 @@ void Controller::launch()
 	//not implemented here
 }
 
-Controller::Controller(unsigned int * _phy_addr)
+Controller::Controller(unsigned int * _fb)
 {
 	//Constructor : generate initial blocks
-	phy_addr = _phy_addr;
-	int count = rand() % 3 + 2;
-	for (int i = 0;i < count;i++)
+	int blockCount=rand()%2+2;
+	isTurnStarted=false;
+	fb=_fb;
+	targetNum=blockCount;
+	ballNum=1;
+	for(int i=0; i<blockCount;i++)
 	{
-
+		int blockPos=rand()%6;
+		target[i]=new block(222,blockPos*80,46,80,0,0,yellowblock,fb,1);
 	}
+	button=new Button(650,35,46,80,0,0,buttonImg,fb);
+	ball[0]=new Ball(590,240,20,20,0,0,ballImg,fb);
+	bar[0]=new Bar(169,0,5,480,0,0,barImg,fb);
+	
+
 }
 
 void Controller::touchHandler(int x, int y)
@@ -157,30 +167,46 @@ void Controller::touchHandler(int x, int y)
 				launch();
 			}
 		}
-	}
-	//Arrow Move Should be implemented
-	else
-	{
-		arrow->setAngle(x, y);
+		//Arrow Move Should be implemented
+		else if()
+		{
+			arrow->setAngle(x, y);
+		}
 	}
 }
 
 //move objects by frame
 void Controller::update()
 {
+	bool isTurnEnd=true;
+	float theta=arrow->getAngle();
 	for (int i = 0;i < targetNum;i++)
-	{
-		target[i]->move(target[i]->getVx(), target[i]->getVy());
-	}
+		target[i]->move(fb);
 	for (int i = 0;i < ballNum;i++)
+		ball[i]->move(fb);
+	for(int i=0;i<targetNum;i++)
+		target[i]->draw(fb);
+	for(int i=0;i<ballNum;i++)
+		ball[i]->draw(fb);
+	for(int i=0;i<ballNum;i++)
 	{
-		ball[i]->move(ball[i]->getVx(), target[i]->getVy());
+		if(!(ball[i]->getVx()==0&&ball[i]->getVy()==0))
+			isTurnEnd=false;
 	}
+	///////////////////////////////////////////////////////
+
+	if(isTurnEnd)
+		endTurn();
 }
 
 void Controller::endTurn()
 {
 	arrow = new Arrow();
+	for(int i=0;i<ballNum;i++)
+	{
+		//ball[i]->setX();
+		//ball[i]->setY();
+	}
 	isTurnStarted = false;
 }
 

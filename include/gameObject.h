@@ -2,7 +2,7 @@ class GameObject
 {
 public:
 	GameObject();
-	GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _phy_addr);
+	GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb);
 	virtual ~GameObject();
 	void setX(float);
 	void setY(float);
@@ -17,7 +17,8 @@ public:
 	int getH();
 	float getVx();
 	float getVy();
-	void move();
+	void move(unsigned int *fb);
+	void draw(unsigned int *fb);
 	virtual bool collision(int);
 private:
 	float x;
@@ -26,7 +27,11 @@ private:
 	int height;
 	float vx;
 	float vy;
+	float px;
+	float py;
+	float ppx;
+	float ppy;
 	unsigned int* img;
 protected:
-	unsigned int* phy_addr;
+	unsigned int* fb;
 };
