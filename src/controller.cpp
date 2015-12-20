@@ -149,10 +149,9 @@ Controller::Controller(unsigned int * _fb)
 		target[i]=new block(222,blockPos*80,46,80,0,0,yellowblock,fb,1);
 	}
 	button=new Button(650,35,46,80,0,0,buttonImg,fb);
-	ball[0]=new Ball(590,240,20,20,0,0,ballImg,fb);
+	ball[0]=new Ball(591-20,240,20,20,0,0,ballImg,fb);
 	bar[0]=new Bar(169,0,5,480,0,0,barImg,fb);
-	
-
+	bar[1]=new Bar(590,0,5,480,0,0,barImg,fb);
 }
 
 void Controller::touchHandler(int x, int y)
