@@ -27,6 +27,7 @@ private:
 	int targetNum;
 	int ballNum;
 	int getItem;
+	int turnNum;
 	unsigned int * blockImage;
 	unsigned int * itemImage;
 	unsigned int * numberImage[10];

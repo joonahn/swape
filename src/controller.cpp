@@ -182,6 +182,7 @@ Controller::Controller(unsigned int * _background)
 	getItem = 0;
 	//Set background
 	background = _background;
+	turnNum=1;
 
 	
 	//Initialize member object
@@ -194,15 +195,21 @@ Controller::Controller(unsigned int * _background)
 		}
 		while(isBlockThere(222, blockY));
 			
-		target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,1);
+		target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,turnNum);
 	}
+	int itemY;
+	do
+	{
+		itemY=(rand()%6)*80;
+	}
+	while(isBlockThere(222,itemY));
+	target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background,1);
 	
 	button=new Button(650,35,46,80,0,0,(unsigned int *)buttonimage,fb,background);
 	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb,background);
 	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb,background);
 	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb,background);
 	arrow = new Arrow(542,228, 47,47,0,0,(unsigned int *)zerodeg, fb,background, 0);
-	
 }
 
 void Controller::touchHandler(int x, int y)
@@ -311,13 +318,14 @@ void Controller::update(unsigned int * fb)
 //Collect balls
 void Controller::endTurn()
 {
+	turnNum++;
 	//delete arrow;
 	//Create more balls when you got items
 	for(int i=0;i<getItem;i++)
 	{
 		ball[ballNum + i] = new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb, background);
 	}
-		
+	
 	ballNum +=getItem;
 	getItem = 0;
 
@@ -339,6 +347,26 @@ void Controller::endTurn()
 		// target[i]->setX(tmpX+46);
 		target[i]->moveto(tmpX+46, target[i]->getY());
 	}
+	int addingTargetNum=rand()%2+3;
+	for(; targetNum < targetNum+addingTargetNum; targetNum++)
+	{
+		int blockY;
+		do
+		{
+			blockY=(rand()%6) * 80;
+		}
+		while(isBlockThere(222, blockY));
+			
+		target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,turnNum);
+	}
+	int itemY;
+	do
+	{
+		itemY=(rand()%6)*80;
+	}
+	while(isBlockThere(222,itemY));
+	target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background,1);
+
 	isTurnStarted = false;
 }
 
