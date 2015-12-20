@@ -9,6 +9,15 @@
 #include "itemblock.h"
 #include "buttonimage.h"
 #include "lcd.h"
+#include "sixtydeg.h"
+#include "fourtyfivedeg.h"
+#include "thirtydeg.h"
+#include "fifteendeg.h"
+#include "zerodeg.h"
+#include "negfifteendeg.h"
+#include "negthirtydeg.h"
+#include "negfourtyfivedeg.h"
+#include "negsixtydeg.h"
 
 bool Controller::isBlockThere(int x, int y)
 {
@@ -141,25 +150,32 @@ void Controller::checkLife(Target * t)
 
 void Controller::launch()
 {
-	float theta=arrow->getAngle();
+	printf("launch start!\n");
+	float tangent=arrow->getTangent();
+	tangent *=-1;
 	int speed=3;
+	startTurn();
 	for(int i=0; i<ballNum;i++)
 	{
-		ball[i]->setVx(speed*sin(theta));
-		ball[i]->setVy(speed*cos(theta));
+		ball[i]->setVy(speed*Q_rsqrt(1+tangent*tangent)*tangent);
+
+		// ball[i]->setVy((((int)tangent)>0)?(speed*Q_rsqrt(1+tangent*tangent)*tangent * (-1)):(speed*Q_rsqrt(1+tangent*tangent)*tangent));//sin
+		ball[i]->setVx(speed*Q_rsqrt(1+tangent*tangent) * (-1));//cos
+		printf("Vx, Vy : %d %d\n", ((int)ball[i]->getVx()), ((int)ball[i]->getVy()));
+		printf("tangent: %d %f \n",(int)tangent, tangent);
 	}
 	//not implemented here
 }
 
 //Constructor : generate initial blocks
-Controller::Controller(unsigned int * _fb, unsigned int * _background)
+Controller::Controller(unsigned int * _background)
 {
+	//Initial Target Number
+	int initialTargetNum = rand()%2+2;
 	//Turn is not started
 	isTurnStarted=false;
 	//Frame buffer
-	fb=_fb;
-	//Number of Target(random)
-	targetNum=rand()%2+2;
+	fb=0;
 	//Number of initial Ball(1)
 	ballNum = 1;
 	//Number of items you've gotten
@@ -167,9 +183,9 @@ Controller::Controller(unsigned int * _fb, unsigned int * _background)
 	//Set background
 	background = _background;
 
-
+	
 	//Initialize member object
-	for(int i=0; i<targetNum;i++)
+	for(targetNum = 0;targetNum < initialTargetNum; targetNum++)
 	{
 		int blockY;
 		do
@@ -178,101 +194,124 @@ Controller::Controller(unsigned int * _fb, unsigned int * _background)
 		}
 		while(isBlockThere(222, blockY));
 			
-		target[i]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,1);
+		target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,1);
 	}
+	
 	button=new Button(650,35,46,80,0,0,(unsigned int *)buttonimage,fb,background);
 	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb,background);
 	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb,background);
 	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb,background);
-	arrow = new Arrow(543,217, 47,47,0,0,(unsigned int *)0, fb,background, 0);
+	arrow = new Arrow(542,228, 47,47,0,0,(unsigned int *)zerodeg, fb,background, 0);
+	
 }
 
 void Controller::touchHandler(int x, int y)
 {
+	printf("%d %d\n", x, y);
 	//button
 	if (!isTurnStarted)
 	{
-		if (x > button->getX() && x < button->getX() - button->getW())
+		printf("isTurnStarted! %d %d\n", (int)(button->getX()),(int)(button->getY()));
+		float data1 = button->getX();
+		float data2 = button->getX() + button->getW();
+		if (x > data1 && x < data2)
 		{
-			if (y > button->getY() && y < button->getY() - button->getH())
+			printf("x>button->getX\n");
+			if (y > button->getY() && y < button->getY() + button->getH())
 			{
+				printf("y>button->getY\n");
 				launch();
 			}
 		}
 		//Arrow Move Should be implemented
 		else if(x < 580)
 		{
-			arrow->setAngle(x, y);
-			float theta=arrow->getAngle();
-			float degree=theta*360/(2*3.14159265358979);
-			if(degree<-52.5)
+			arrow->setTangent(x, y);
+			float tangent=arrow->getTangent();
+			if(tangent<-1.303225)
 			{
-				arrow->setImg((unsigned int *)sixtydeg);
+				arrow->setImg((unsigned int *)negsixtydeg);
 			}
-			else if(-52.5<=degree&&degree<-37.5)
-			{
-				arrow->setImg((unsigned int *)fourtyfivedeg);
-			}
-			else if(-37.5<=degree&&degree<-22.5)
-			{
-				arrow->setImg((unsigned int *)thirtydeg);
-			}
-			else if(-22.5=<degree&&degree<-5)
-			{
-				arrow->setImg((unsigned int *)fifteendeg);
-			}
-			else if(-5=<degree&&degree<5)
-			{
-				arrow->setImg((unsigned int *)zerodeg);
-			}
-			else if(5<degree&&degree<22.5)
-			{
-				arrow->setImg((unsigned int *)negfifteendeg);
-			}
-			else if(22.5<degree&&degree<37.5)
-			{
-				arrow->setImg((unsigned int *)negthirtydeg);
-			}
-			else if(37.5<degree&&degree<52.5)
+			else if(-1.303225<=tangent&&tangent<-0.767326)
 			{
 				arrow->setImg((unsigned int *)negfourtyfivedeg);
 			}
-			else if(52.5<degree)
+			else if(-0.767326<=tangent&&tangent<-0.414213)
 			{
-				arrow->setImg((unsigned int *)negsixtydeg);
+				arrow->setImg((unsigned int *)negthirtydeg);
+			}
+			else if(-0.414213<=tangent&&tangent<-0.087486)
+			{
+				arrow->setImg((unsigned int *)negfifteendeg);
+			}
+			else if(-0.087486<=tangent&&tangent<0.087486)
+			{
+				arrow->setImg((unsigned int *)zerodeg);
+			}
+			else if(0.087486<=tangent&&tangent<0.414213)
+			{
+				arrow->setImg((unsigned int *)fifteendeg);
+			}
+			else if(0.414213<=tangent&&tangent<0.767326)
+			{
+				arrow->setImg((unsigned int *)thirtydeg);
+			}
+			else if(0.767326<=tangent&&tangent<1.303225)
+			{
+				arrow->setImg((unsigned int *)fourtyfivedeg);
+			}
+			else if(1.303225<=tangent)
+			{
+				arrow->setImg((unsigned int *)sixtydeg);
 			}
 		}
 	}
 }
 
 //move objects by frame
-void Controller::update()
+void Controller::update(unsigned int * fb)
 {
-	bool isTurnEnd=true;
+	//Move
 	for (int i = 0;i < targetNum;i++)
 		target[i]->move(fb);
 	for (int i = 0;i < ballNum;i++)
 		ball[i]->move(fb);
+	for(int i = 0;i<2;i++)
+		bar[i]->move(fb);
+	button->move(fb);
+	if(!isTurnStarted)	
+		arrow->move(fb);
+
+	//Draw
 	for(int i=0;i<targetNum;i++)
 		target[i]->draw(fb);
 	for(int i=0;i<ballNum;i++)
 		ball[i]->draw(fb);
-	for(int i=0;i<ballNum;i++)
+	for(int i = 0;i<2;i++)
+		bar[i]->draw(fb);
+	button->draw(fb);
+	if(!isTurnStarted)
+		arrow->draw(fb);
+
+	if(isTurnStarted)
 	{
-		if(ball[i]->getX()!=590-20)
-			isTurnEnd=false;
-	}
-	if(isTurnEnd)
-		endTurn();
+		bool isTurnEnd=true;
+		for(int i=0;i<ballNum;i++)
+		{
+			if(ball[i]->getX()!=590-20)
+				isTurnEnd=false;
+		}
+		if(isTurnEnd)
+			endTurn();
+	}	
+
 }
 
 //Drag blocks downward
 //Collect balls
 void Controller::endTurn()
 {
-	//generate arrow
-	arrow = new Arrow(543,firstBallArriveY, 47,47,0,0,(unsigned int *)0, fb,background, 0);
-
+	//delete arrow;
 	//Create more balls when you got items
 	for(int i=0;i<getItem;i++)
 	{
@@ -284,19 +323,21 @@ void Controller::endTurn()
 
 	for(int i=0;i<ballNum;i++)
 	{
-		ball[i]->setX(591-21);
-		ball[i]->setY(firstBallArriveY);
+		// ball[i]->setX(591-21);
+		// ball[i]->setY(firstBallArriveY);
+		ball[i]->moveto(591-21, firstBallArriveY);
 	}
 
 	for(int i=0;i<targetNum;i++)
 	{
-		int tmpY = target[i]->getY();
-		if(tmpY==498)
+		int tmpX = target[i]->getX();
+		if(tmpX==498)
 		{
 			gameOver();
 			return;
 		}
-		target[i]->setY(tmpY+46);
+		// target[i]->setX(tmpX+46);
+		target[i]->moveto(tmpX+46, target[i]->getY());
 	}
 	isTurnStarted = false;
 }
@@ -310,6 +351,5 @@ void Controller::gameOver()
 
 void Controller::startTurn()
 {
-	delete arrow;
 	isTurnStarted = true;
 }

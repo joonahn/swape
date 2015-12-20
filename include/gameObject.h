@@ -21,21 +21,24 @@ public:
 	float getVx();
 	float getVy();
 	void move(unsigned int *fb);
+	void moveto(int x, int y);
 	void draw(unsigned int *fb);
 	virtual bool collision(int);
 private:
+	float px;
+	float py;
+	float ppx;
+	float ppy;
+	unsigned int* img;
+	bool isMoveTo;
+	int moveX, moveY;
+protected:
 	float x;
 	float y;
 	int width;
 	int height;
 	float vx;
 	float vy;
-	float px;
-	float py;
-	float ppx;
-	float ppy;
-	unsigned int* img;
-protected:
 	unsigned int * fb;
 	unsigned int * background;
 };

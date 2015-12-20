@@ -17,8 +17,8 @@ class Controller
 private:
 	//Members
 	bool isTurnStarted;
-	unsigned int * fb;
 	unsigned int * background;
+	unsigned int * fb;
 	Target * target[TARGET_MAX];
 	Button * button;
 	Ball * ball[BALL_MAX];
@@ -42,9 +42,9 @@ private:
 
 public:
 	//Inner method
-	Controller(unsigned int * _fb, unsigned int * background);
+	Controller(unsigned int * background);
 	void touchHandler(int x, int y);
-	void update();
+	void update(unsigned int * fb);
 	void endTurn();
 	void gameOver();
 	void startTurn();

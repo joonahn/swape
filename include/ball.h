@@ -9,5 +9,6 @@ public:
 		unsigned int* _img, unsigned int* _fb, unsigned int * _background);
 	virtual ~Ball();
 	bool collision(int _type);
+	void move(unsigned int * fb);
 private:
 };

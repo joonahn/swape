@@ -1,11 +1,12 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include "frame.h"
 #include "s3c6410.h"
 #include "lcd.h"
 #include "graphics.h"
 #include "util.h"
-#include "ball.h"
-#include "image.h"
+#include "controller.h"
+#include "jsg.h"
 
 static int frame_asserted = 0;
 
@@ -18,11 +19,12 @@ static unsigned background[S3CFB_SIZE];
 static unsigned fb_odd[S3CFB_SIZE];
 static unsigned fb_even[S3CFB_SIZE];
 
-static int imagew = 50;
-static int imageh = 50;
+static int imagew = 100;
+static int imageh = 55;
 
 //Global Image variable
-Image *img[IMAGE_MAX] = {(Image *)0};
+Controller * controller = (Controller *)0;
+
 
 int frame_is_asserted(void) {
 	return frame_asserted;
@@ -39,7 +41,7 @@ void frame_set_fb(unsigned *fb) {
 
 void frame_init(void) {
 	int i;
-
+	  printf("frame init second line");
 	for (i = 0; i < S3CFB_SIZE; i ++) {
 		int x, y;
 
@@ -64,16 +66,13 @@ void frame_init(void) {
 		// which reside on MSB
 		// outside of circle area remains with alpha value 0.
 		if (ds < limit * 9 / 10)
-			((unsigned *)ball)[i] |= 0xFF000000;
+			((unsigned *)jsg)[i] |= 0xFF000000;
 		else if (ds < limit)
-			((unsigned *)ball)[i] = 0xFF303030;
+			((unsigned *)jsg)[i] = 0xFF303030;
 		// ((unsigned *)ball)[i] |= 0xFF000000;
 	}
-
-	for(i=0;i<IMAGE_MAX;i++)
-	{
-		img[i] = new Image(ball, 50, 50, 10, 10, background);
-	}
+	printf("I think this is the bomb");
+	controller = new Controller(background);
 
 	frame_set_fb(fb_even);
 }
@@ -171,6 +170,6 @@ static void implement_your_drawing_here(unsigned *fb) {
 			(int)(x), (int)y);
 	*/
 	
-	controler->update();
+	controller->update(fb);
 
 }

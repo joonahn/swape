@@ -11,6 +11,7 @@ Target::~Target(){}
 bool Target::collision(int _type)
 {
 	Life--;
+	return false;
 }
 int Target::getLife(){return Life;}
 

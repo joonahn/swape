@@ -3,7 +3,6 @@
 
 #include <s3c_uart.h>
 #include <s3c6410.h>
-#include "image.h"
 #include "frame.h"
 
 #define VIC0IRQSTATUS_REG __REG(ELFIN_VIC0_BASE_ADDR + 0x0)
@@ -34,7 +33,6 @@
 #define BIT_TIMER4_EN (1<<4)
 
 unsigned int timer1_isr_call_count = 0;
-// extern Image *img [IMAGE_MAX];
 
 //Interrupt Service Routine for Timer1
 void timer2InterruptServiceRoutine(void){
@@ -46,10 +44,6 @@ void timer2InterruptServiceRoutine(void){
 
   timer1_isr_call_count++;
   // printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
-/*
-  for(int i = 0;i<5;i++)
-  // img[i]->move(20,0);
-    img[i]->reflectiveMove();*/
 
   frame_service();
 
@@ -73,21 +67,12 @@ void timer3InterruptServiceRoutine(void){
   timer1_isr_call_count++;
   //printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
 
-  // static int index = 0;
-  // img[index]->setVelocity(rand()%15 + 2, rand() %15 + 3);
-  // index++;
 
 
   //Reset interrupt status
   TINT_CSTAT_REG |= BIT_TIMER3_STAT;
   VIC0IRQSTATUS_REG |= BIT_TIMER3;
 
-  // if(index==IMAGE_MAX)
-  // {
-  //   VIC0INTENABLE_REG &= ~(BIT_TIMER3);
-  //   TINT_CSTAT_REG &= ~(BIT_TIMER3_EN);
-  //   VIC0VECTADDR27 = 0;
-  // }
 
   //Enable other interrupts
   VIC0INTENABLE_REG = temp;

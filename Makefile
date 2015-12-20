@@ -16,7 +16,6 @@ OBJ=\
     $(OUTDIR)/interrupt.o \
     $(OUTDIR)/lcd.o \
     $(OUTDIR)/timer.o \
-    $(OUTDIR)/image.o \
     $(OUTDIR)/button.o \
     $(OUTDIR)/ball.o \
     $(OUTDIR)/arrow.o \
@@ -24,6 +23,10 @@ OBJ=\
     $(OUTDIR)/controller.o \
     $(OUTDIR)/gameObject.o \
     $(OUTDIR)/target.o \
+    $(OUTDIR)/frame.o \
+    $(OUTDIR)/util.o \
+    $(OUTDIR)/graphics.o \
+
 
 
 CFLAGS64=-DCONFIG_MANGO_64

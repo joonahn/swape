@@ -3,6 +3,7 @@
 #include "lcd.h"
 #include "s3c_uart.h"
 #include "s3c6410.h"
+#include "controller.h"
 
 /* Registers for timer interrupt */
 #define VIC0IRQSTATUS_REG __REG(ELFIN_VIC0_BASE_ADDR + 0x0)
@@ -29,6 +30,8 @@
 
 #define BIT_ADCEOC (1<<31)
 #define BIT_ADC_PEN (1<<30)
+
+extern Controller * controller;
 
 /* enable interrupt in CPU level */
 void enable_interrupts(void){
@@ -88,8 +91,9 @@ void touchInterruptServiceRoutine2(void){
   //printf ("x: %d y: %d\n", x, y);
 
   /* Change to the device coordinate */
-  drawing((x-210)*1.27, (y-325)*1.33);
-
+  //drawing((x-210)*1.27, (y-325)*1.33);
+  if(controller)
+    controller->touchHandler((x-210)*1.27, (y-325)*1.33);
  
   writel(0xd3, ADCTSC);
   writel(0x1, ADCCLRINT);

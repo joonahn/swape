@@ -8,16 +8,20 @@
 static void mango_hw_init(void)
 {
   mango_uart_init(1, 115200);
+  printf("uart init 2");
   mango_interrupt_init();
+  printf("before lcd init");
   mango_lcd_init();
+  printf("before timer init");
   mango_timer_init();
 }
 
 int main()
 {
   char ch;
+  printf("asdf");
   mango_hw_init();
-
+  printf("before while");
   while(1){
     ch = getchar();
     switch(ch){

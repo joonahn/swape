@@ -11,6 +11,32 @@ Ball::Ball(int _x, int _y, int _width, int _height, int _vx, int _vy,
 	
 }
 Ball::~Ball(){}
+void Ball::move(unsigned int *fb)
+{
+	
+	if(x<169-5)
+	{
+		x=169-5;
+		vx=-vx;
+	}
+	if(y<0)
+	{
+		y=0;
+		vy=-vy;
+	}
+	if(y>480-width)
+	{
+		y=480-width;
+		vy=-vy;
+	}
+	if(x>590-height)
+	{
+		x=590-height;
+		vx=0;
+		vy=0;
+	}
+	GameObject::move(fb);
+}
 bool Ball::collision(int _type)
 {
 	switch(_type)
@@ -62,4 +88,5 @@ bool Ball::collision(int _type)
 		setVy(-tmp);
 		break;
 	}
+	return false;
 }

@@ -2,8 +2,6 @@
 
 #include "s3c_uart.h"
 #include "s3c6410.h"
-#include "jsg.h"
-#include "image.h"
 #include "lcd.h"
 #include "frame.h"
 #include "vic.h"
@@ -96,16 +94,21 @@ unsigned int get_hclk(void){
 }
 
 void init_lcd_reg(void){
+  printf("init start");
   unsigned int hclk = get_hclk();
 
-  printf("VCLK : %d, CLKVAL:%d\n", S3CFB_PIXEL_CLOCK, (int)(hclk/S3CFB_PIXEL_CLOCK));
+  printf("VCLK : %d, CLKVAL:%dgg\n", S3CFB_PIXEL_CLOCK, (int)(hclk/S3CFB_PIXEL_CLOCK));
 
+  printf("asd");
   HOSTIFB_MIFPCON_REG = 0x0;
+  printf("EEEE");
   SPCON_REG &= (~0x3);
   SPCON_REG |= 0x1;
 
+
   GPICON_REG = 0xAAAAAAAA;
   GPJCON_REG = 0xAAAAAAAA;
+  printf("init_lcd_reg mid");
 
   S3C_VIDCON0 = S3C_VIDCON0_VIDOUT_RGB_IF |
   S3C_VIDCON0_PNRMODE_BGR_P |
@@ -140,6 +143,7 @@ void init_lcd_reg(void){
     (PAGE_WIDTH + S3CFB_OFFSET) * S3CFB_VRES);
   S3C_VIDW00ADD2  = S3C_VIDWxxADD2_OFFSIZE_F(S3CFB_OFFSET) |
   S3C_VIDWxxADD2_PAGEWIDTH_F(PAGE_WIDTH);
+  printf("init_lcd_reg last");
 }
 
 void set_wincon0_enable(void){
@@ -163,13 +167,6 @@ void drawing(int x, int y){
   unsigned int *phy_addr = FB_ADDR;
   int i, j;
 
-
-  /* Implement your drawing code */
-  // for(i=0;i<55;i++)
-  //   for(j=0;j<100;j++)
-  //     phy_addr[x+j + (y+i)*800] = jsg[i*100+j];
-
-    // Image(unsigned *int[] img, int width, int height, unsigned int *_phy_addr)
 }
 
 void vsync_interrupt_service_routine(void) {
@@ -180,8 +177,6 @@ void vsync_interrupt_service_routine(void) {
   VIC0INTENCLEAR_REG = 0xffffffff;
 
   if (S3C_VIDINTCON1 | (1 << 1)) {
-    //printf("%dth service\n", serviced);
-    //ppc_assert();
     frame_assert();
     S3C_VIDINTCON1 = 0x2;
   }
@@ -195,19 +190,20 @@ void mango_lcd_init(void){
   unsigned int *phy_addr = FB_ADDR;
 
   lcd_bl_on(MAX_BL_LEV-1);
+  printf("The bomb lcd_pwr_on");
   lcd_pwr_on();
+  printf("init_lcd_reg");
   init_lcd_reg();
 
+  printf("The bomb frame_init");
   frame_init();
-
+  printf("oops! frame_init");
   //VSync Interrupt Setting
   S3C_VIDINTCON0 |= (3 << 15) | (1 << 12) | 1;
   VIC0INTENABLE_REG |= (1 << 30);
   VIC0VECTADDR30 = (unsigned)vsync_interrupt_service_routine;
 
   set_lcd_pos(0, 0, S3CFB_HRES, S3CFB_VRES);
-  // for(i=0; i<S3CFB_SIZE; i++)
-  //   phy_addr[i] = 0xFFFFFF;
 
   set_wincon0_enable();
   set_vidcon0_enable(); 
