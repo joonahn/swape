@@ -1,10 +1,12 @@
 #include <cstdlib>
 #include "ball.h"
+#include "gameObject.h"
 
 Ball::Ball(){}
-Ball::Ball(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int * _fb)
+Ball::Ball(int _x, int _y, int _width, int _height, int _vx, int _vy, 
+	unsigned int* _img, unsigned int * _fb):GameObject(_x,_y,_width,_height,_vx,_vy,_img,_fb);
 {
-	gameObject::gameObject(_x,_y,_width,_height,_vx,_vy,_img,_fb);
+	
 }
 Ball::~Ball(){}
 bool Ball::collision(int _type)

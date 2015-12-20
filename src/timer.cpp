@@ -34,7 +34,7 @@
 #define BIT_TIMER4_EN (1<<4)
 
 unsigned int timer1_isr_call_count = 0;
-extern Image *img [IMAGE_MAX];
+// extern Image *img [IMAGE_MAX];
 
 //Interrupt Service Routine for Timer1
 void timer2InterruptServiceRoutine(void){
@@ -73,21 +73,21 @@ void timer3InterruptServiceRoutine(void){
   timer1_isr_call_count++;
   //printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
 
-  static int index = 0;
-  img[index]->setVelocity(rand()%15 + 2, rand() %15 + 3);
-  index++;
+  // static int index = 0;
+  // img[index]->setVelocity(rand()%15 + 2, rand() %15 + 3);
+  // index++;
 
 
   //Reset interrupt status
   TINT_CSTAT_REG |= BIT_TIMER3_STAT;
   VIC0IRQSTATUS_REG |= BIT_TIMER3;
 
-  if(index==IMAGE_MAX)
-  {
-    VIC0INTENABLE_REG &= ~(BIT_TIMER3);
-    TINT_CSTAT_REG &= ~(BIT_TIMER3_EN);
-    VIC0VECTADDR27 = 0;
-  }
+  // if(index==IMAGE_MAX)
+  // {
+  //   VIC0INTENABLE_REG &= ~(BIT_TIMER3);
+  //   TINT_CSTAT_REG &= ~(BIT_TIMER3_EN);
+  //   VIC0VECTADDR27 = 0;
+  // }
 
   //Enable other interrupts
   VIC0INTENABLE_REG = temp;

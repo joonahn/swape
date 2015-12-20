@@ -110,7 +110,7 @@ void Controller::checkLife(Target * t)
 		int i;
 		for(i=0;i<targetNum;i++)
 		{
-			if(target[i]=t)
+			if(target[i]==t)
 				break;
 		}
 		delete t;
@@ -118,7 +118,7 @@ void Controller::checkLife(Target * t)
 		{
 			target[i]=target[i+1];
 		}
-		target[targetNum-1]=null;
+		target[targetNum-1]=(Target *)0;
 		targetNum--;
 	}
 }

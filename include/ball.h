@@ -1,4 +1,6 @@
-class Ball:public gameObject
+#include "gameObject.h"
+
+class Ball: public GameObject
 {
 public:
 	Ball();

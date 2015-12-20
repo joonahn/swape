@@ -1,4 +1,5 @@
-class Button:gameObject
+#include "gameObject.h"
+class Button: public GameObject
 {
 public:
 	Button();
