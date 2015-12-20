@@ -146,12 +146,12 @@ Controller::Controller(unsigned int * _fb)
 	for(int i=0; i<blockCount;i++)
 	{
 		int blockPos=rand()%6;
-		target[i]=new block(222,blockPos*80,46,80,0,0,yellowblock,fb,1);
+		target[i]=new block(222,blockPos*80,46,80,0,0,(unsigned int *)yellowblock,fb,1);
 	}
 	button=new Button(650,35,46,80,0,0,buttonImg,fb);
-	ball[0]=new Ball(591-20,240,20,20,0,0,ballImg,fb);
-	bar[0]=new Bar(169,0,5,480,0,0,barImg,fb);
-	bar[1]=new Bar(590,0,5,480,0,0,barImg,fb);
+	ball[0]=new Ball(591-20,240,20,20,0,0,(unsigned int *)ballimage,fb);
+	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb);
+	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb);
 }
 
 void Controller::touchHandler(int x, int y)
@@ -189,11 +189,18 @@ void Controller::update()
 		ball[i]->draw(fb);
 	for(int i=0;i<ballNum;i++)
 	{
-		if(!(ball[i]->getVx()==0&&ball[i]->getVy()==0))
+		if(ball[i]->getX()!=590-20)
 			isTurnEnd=false;
 	}
-	///////////////////////////////////////////////////////
-
+	float degree=theta*360/(2*3.14159265358979);
+	if(degree>0)
+	{
+		
+	}
+	else
+	{
+		
+	}
 	if(isTurnEnd)
 		endTurn();
 }
