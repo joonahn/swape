@@ -193,9 +193,47 @@ void Controller::touchHandler(int x, int y)
 			}
 		}
 		//Arrow Move Should be implemented
-		else if()
+		else if(x<600)
 		{
 			arrow->setAngle(x, y);
+			float theta=arrow->getAngle();
+			float degree=theta*360/(2*3.14159265358979);
+			if(degree<-52.5)
+			{
+				arrow->setImg((unsigned int *)sixtydeg);
+			}
+			else if(-52.5<=degree&&degree<-37.5)
+			{
+				arrow->setImg((unsigned int *)fourtyfivedeg);
+			}
+			else if(-37.5<=degree&&degree<-22.5)
+			{
+				arrow->setImg((unsigned int *)thirtydeg);
+			}
+			else if(-22.5=<degree&&degree<-5)
+			{
+				arrow->setImg((unsigned int *)fifteendeg);
+			}
+			else if(-5=<degree&&degree<5)
+			{
+				arrow->setImg((unsigned int *)zerodeg);
+			}
+			else if(5<degree&&degree<22.5)
+			{
+				arrow->setImg((unsigned int *)negfifteendeg);
+			}
+			else if(22.5<degree&&degree<37.5)
+			{
+				arrow->setImg((unsigned int *)negthirtydeg);
+			}
+			else if(37.5<degree&&degree<52.5)
+			{
+				arrow->setImg((unsigned int *)negfourtyfivedeg);
+			}
+			else if(52.5<degree)
+			{
+				arrow->setImg((unsigned int *)negsixtydeg);
+			}
 		}
 	}
 }
@@ -204,7 +242,6 @@ void Controller::touchHandler(int x, int y)
 void Controller::update()
 {
 	bool isTurnEnd=true;
-	float theta=arrow->getAngle();
 	for (int i = 0;i < targetNum;i++)
 		target[i]->move(fb);
 	for (int i = 0;i < ballNum;i++)
@@ -217,15 +254,6 @@ void Controller::update()
 	{
 		if(ball[i]->getX()!=590-20)
 			isTurnEnd=false;
-	}
-	float degree=theta*360/(2*3.14159265358979);
-	if(degree>0)
-	{
-		
-	}
-	else
-	{
-		
 	}
 	if(isTurnEnd)
 		endTurn();
