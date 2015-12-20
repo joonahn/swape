@@ -6,11 +6,11 @@
 #define MANGO_WIDTH 800
 #define MANGO_HEIGHT 480
 
-class Target;
-class Button;
-class Bar;
-class Ball;
-class Arrow;
+#include "target.h"
+#include "button.h"
+#include "bar.h"
+#include "ball.h"
+#include "arrow.h"
 
 class Controller
 {
@@ -18,6 +18,7 @@ private:
 	//Members
 	bool isTurnStarted;
 	unsigned int * fb;
+	unsigned int * background;
 	Target * target[TARGET_MAX];
 	Button * button;
 	Ball * ball[BALL_MAX];
@@ -25,6 +26,7 @@ private:
 	Arrow * arrow;
 	int targetNum;
 	int ballNum;
+	int getItem;
 	unsigned int * blockImage;
 	unsigned int * itemImage;
 	unsigned int * numberImage[10];
@@ -40,7 +42,7 @@ private:
 
 public:
 	//Inner method
-	Controller(unsigned int * _fb);
+	Controller(unsigned int * _fb, unsigned int * background);
 	void touchHandler(int x, int y);
 	void update();
 	void endTurn();

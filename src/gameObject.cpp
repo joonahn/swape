@@ -1,11 +1,13 @@
 #include "gameObject.h"
+#include "lcd.h"
+#include "graphics.h"
 
 GameObject::GameObject()
 {
 	vx=0;
 	vy=0;
 };
-GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb)
+GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb, unsigned int * _background)
 {
 	x=_x;
 	y=_y;
@@ -15,12 +17,15 @@ GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, f
 	vy=_vy;
 	img=_img;
 	fb=_fb;
+	background = _background;
 }
 GameObject::~GameObject()
 {
-	for(int i=y;i<y+height;i++)
-		for(int j=x;i<x+width;j++)
-			fb[y*800+x]=0xFFFFFF;
+	gfx_bitblck_ext(fb, background,
+		ppx, ppy, ppx+width, ppy+height,
+		S3CFB_HRES, S3CFB_VRES, 
+		ppx, ppy, ppx+width, ppy+height,
+		S3CFB_HRES, S3CFB_VRES);
 }
 void GameObject::setX(float _x){x=_x;}
 void GameObject::setY(float _y){y=_y;}
@@ -67,11 +72,11 @@ void GameObject::move(unsigned int *fb)
 		vy=0;
 	}
 	//background drawing
-	gfx_bitblock_ext(fb,background,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES);
+	gfx_bitblck_ext(fb,background,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES);
 }
 void GameObject::draw(unsigned int *fb)
 {
 	//image drawing
-	gfx_bitblock(fb,img, S3CFB_HRES, S3CFB_VRES, width, height,(int)x,(int)y);
+	gfx_bitblck(fb,img, S3CFB_HRES, S3CFB_VRES, width, height,(int)x,(int)y);
 }
 bool GameObject::collision(int _type){}

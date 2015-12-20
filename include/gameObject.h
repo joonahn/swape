@@ -1,8 +1,11 @@
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+
 class GameObject
 {
 public:
 	GameObject();
-	GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb);
+	GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb, unsigned int * _background);
 	virtual ~GameObject();
 	void setX(float);
 	void setY(float);
@@ -33,5 +36,8 @@ private:
 	float ppy;
 	unsigned int* img;
 protected:
-	unsigned int* fb;
+	unsigned int * fb;
+	unsigned int * background;
 };
+
+#endif

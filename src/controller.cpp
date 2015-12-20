@@ -8,6 +8,7 @@
 #include "barimage.h"
 #include "itemblock.h"
 #include "buttonimage.h"
+#include "lcd.h"
 
 bool Controller::isBlockThere(int x, int y)
 {
@@ -51,21 +52,21 @@ void Controller::detectCollision()
 				{
 					//left bottom
 					if(target[i]->collision(3))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(3);
 				}
 				else if (((ty + theight) > (by + bheight)) && (by>ty))
 				{
 					//left center
 					if(target[i]->collision(2))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(2);
 				}
 				else if (((ty + theight + 2) > by) &&(ty + theight < by + bheight))
 				{
 					//left top
 					if(target[i]->collision(1))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(1);
 				}
 				
@@ -77,14 +78,14 @@ void Controller::detectCollision()
 				{
 					//center bottom
 					if(target[i]->collision(4))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(4);
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
 					//center top
 					if(target[i]->collision(0))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(0);
 				}
 			}
@@ -95,21 +96,21 @@ void Controller::detectCollision()
 				{
 					//right bottom
 					if(target[i]->collision(5))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(5);
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
 					//right center
 					if(target[i]->collision(6))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(6);
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
 					//right top
 					if(target[i]->collision(8))
-						ball[ballNum++]=new ball()//Parameter setting here
+						getItem++;//Parameter setting here
 					ball[j]->collision(8);
 				}
 			}
@@ -151,7 +152,7 @@ void Controller::launch()
 }
 
 //Constructor : generate initial blocks
-Controller::Controller(unsigned int * _fb)
+Controller::Controller(unsigned int * _fb, unsigned int * _background)
 {
 	//Turn is not started
 	isTurnStarted=false;
@@ -160,24 +161,30 @@ Controller::Controller(unsigned int * _fb)
 	//Number of Target(random)
 	targetNum=rand()%2+2;
 	//Number of initial Ball(1)
-	ballNum=1;
+	ballNum = 1;
+	//Number of items you've gotten
+	getItem = 0;
+	//Set background
+	background = _background;
+
 
 	//Initialize member object
 	for(int i=0; i<targetNum;i++)
 	{
+		int blockY;
 		do
 		{
-			int blockY=(rand()%6) * 80;
+			blockY=(rand()%6) * 80;
 		}
 		while(isBlockThere(222, blockY));
 			
-		target[i]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,1);
+		target[i]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,1);
 	}
-	button=new Button(650,35,46,80,0,0,buttonimage,fb);
-	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb);
-	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb);
-	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb);
-	arrow = new Arrow(543,217, 47,47,0,0,(unsigned int *)0, fb);
+	button=new Button(650,35,46,80,0,0,(unsigned int *)buttonimage,fb,background);
+	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb,background);
+	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb,background);
+	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb,background);
+	arrow = new Arrow(543,217, 47,47,0,0,(unsigned int *)0, fb,background, 0);
 }
 
 void Controller::touchHandler(int x, int y)
@@ -193,7 +200,7 @@ void Controller::touchHandler(int x, int y)
 			}
 		}
 		//Arrow Move Should be implemented
-		else if()
+		else if(x < 590)
 		{
 			arrow->setAngle(x, y);
 		}
@@ -235,13 +242,24 @@ void Controller::update()
 //Collect balls
 void Controller::endTurn()
 {
-	
-	arrow = new Arrow(543,firstBallArriveY, 47,47,0,0,(unsigned int *)0, fb);
+	//generate arrow
+	arrow = new Arrow(543,firstBallArriveY, 47,47,0,0,(unsigned int *)0, fb,background, 0);
+
+	//Create more balls when you got items
+	for(int i=0;i<getItem;i++)
+	{
+		ball[ballNum + i] = new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb, background);
+	}
+		
+	ballNum +=getItem;
+	getItem = 0;
+
 	for(int i=0;i<ballNum;i++)
 	{
 		ball[i]->setX(591-21);
 		ball[i]->setY(firstBallArriveY);
 	}
+
 	for(int i=0;i<targetNum;i++)
 	{
 		int tmpY = target[i]->getY();

@@ -1,10 +1,12 @@
-#include <cstdlib>
+#include <stdlib.h>
+#include <time.h>
 #include "ball.h"
 #include "gameObject.h"
 
 Ball::Ball(){}
 Ball::Ball(int _x, int _y, int _width, int _height, int _vx, int _vy, 
-	unsigned int* _img, unsigned int * _fb):GameObject(_x,_y,_width,_height,_vx,_vy,_img,_fb);
+	unsigned int* _img, unsigned int * _fb, unsigned int * _background)
+		:GameObject(_x,_y,_width,_height,_vx,_vy,_img,_fb, _background)
 {
 	
 }
