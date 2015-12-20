@@ -45,11 +45,27 @@ void GameObject::move(unsigned int *fb)
 	y+=vy;
 	int a=(int)x;
 	int b=(int)y;
-	if(x<0)x=0;
-	if(y<0)y=0;
-	if(x>800-width)x=800-width;
-	if(y>480-height)y=480-height;
-
+	if(x<169-5)
+	{
+		x=169-5;
+		vx=-vx;
+	}
+	if(y<0)
+	{
+		y=0;
+		vy=-vy;
+	}
+	if(y>480-width)
+	{
+		y=480-width;
+		vy=-vy;
+	}
+	if(x>590-height)
+	{
+		x=590-height;
+		vx=0;
+		vy=0;
+	}
 	//background drawing
 	gfx_bitblock_ext(fb,background,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES,ppx,ppy,ppx+width,ppy+height,S3CFB_HRES, S3CFB_VRES);
 }
