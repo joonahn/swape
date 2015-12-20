@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 #include "ball.h"
 #include "gameObject.h"
 
@@ -14,9 +15,9 @@ Ball::~Ball(){}
 void Ball::move(unsigned int *fb)
 {
 	
-	if(x<169-5)
+	if(x<169+5)
 	{
-		x=169-5;
+		x=169+5;
 		vx=-vx;
 	}
 	if(y<0)
@@ -39,6 +40,7 @@ void Ball::move(unsigned int *fb)
 }
 bool Ball::collision(int _type)
 {
+	printf("Ball::collision");
 	switch(_type)
 	{
 		float tmp;

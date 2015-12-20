@@ -59,6 +59,7 @@ void Controller::detectCollision()
 				//Collision!
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
+					printf("Controller::collision");
 					//left bottom
 					if(target[i]->collision(3))
 						getItem++;//Parameter setting here
@@ -66,6 +67,7 @@ void Controller::detectCollision()
 				}
 				else if (((ty + theight) > (by + bheight)) && (by>ty))
 				{
+					printf("Controller::collision");
 					//left center
 					if(target[i]->collision(2))
 						getItem++;//Parameter setting here
@@ -73,6 +75,7 @@ void Controller::detectCollision()
 				}
 				else if (((ty + theight + 2) > by) &&(ty + theight < by + bheight))
 				{
+					printf("Controller::collision");
 					//left top
 					if(target[i]->collision(1))
 						getItem++;//Parameter setting here
@@ -85,6 +88,7 @@ void Controller::detectCollision()
 				//Collision!
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
+					printf("Controller::collision");
 					//center bottom
 					if(target[i]->collision(4))
 						getItem++;//Parameter setting here
@@ -92,6 +96,7 @@ void Controller::detectCollision()
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
+					printf("Controller::collision");
 					//center top
 					if(target[i]->collision(0))
 						getItem++;//Parameter setting here
@@ -103,6 +108,7 @@ void Controller::detectCollision()
 				//Collision!
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
+					printf("Controller::collision");
 					//right bottom
 					if(target[i]->collision(5))
 						getItem++;//Parameter setting here
@@ -110,6 +116,7 @@ void Controller::detectCollision()
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
+					printf("Controller::collision");
 					//right center
 					if(target[i]->collision(6))
 						getItem++;//Parameter setting here
@@ -117,12 +124,14 @@ void Controller::detectCollision()
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
+					printf("Controller::collision");
 					//right top
 					if(target[i]->collision(8))
 						getItem++;//Parameter setting here
 					ball[j]->collision(8);
 				}
 			}
+			
 		}
 		checkLife(target[i]);
 	}
@@ -138,13 +147,16 @@ void Controller::checkLife(Target * t)
 			if(target[i]==t)
 				break;
 		}
-		delete t;
-		for(;i<targetNum-1;i++)
+		if(i!=targetNum)
 		{
-			target[i]=target[i+1];
+			delete t;
+			for(;i<targetNum-1;i++)
+			{
+				target[i]=target[i+1];
+			}
+			target[targetNum-1]=(Target *)0;
+			targetNum--;
 		}
-		target[targetNum-1]=(Target *)0;
-		targetNum--;
 	}
 }
 
@@ -271,7 +283,9 @@ void Controller::touchHandler(int x, int y)
 //move objects by frame
 void Controller::update(unsigned int * fb)
 {
-	//Move
+	detectCollision();
+
+	//Move - Draw Background
 	for (int i = 0;i < targetNum;i++)
 		target[i]->move(fb);
 	for (int i = 0;i < ballNum;i++)
@@ -279,8 +293,7 @@ void Controller::update(unsigned int * fb)
 	for(int i = 0;i<2;i++)
 		bar[i]->move(fb);
 	button->move(fb);
-	if(!isTurnStarted)	
-		arrow->move(fb);
+	arrow->move(fb);
 
 	//Draw
 	for(int i=0;i<targetNum;i++)
@@ -293,13 +306,21 @@ void Controller::update(unsigned int * fb)
 	if(!isTurnStarted)
 		arrow->draw(fb);
 
+
+
 	if(isTurnStarted)
 	{
 		bool isTurnEnd=true;
 		for(int i=0;i<ballNum;i++)
 		{
 			if(ball[i]->getX()!=590-20)
+			{
 				isTurnEnd=false;
+			}
+			else if(firstBallArriveY==-1)
+			{
+				firstBallArriveY = ball[i]->getY();
+			}
 		}
 		if(isTurnEnd)
 			endTurn();
@@ -321,6 +342,7 @@ void Controller::endTurn()
 	ballNum +=getItem;
 	getItem = 0;
 
+	//Collect balls
 	for(int i=0;i<ballNum;i++)
 	{
 		// ball[i]->setX(591-21);
@@ -328,6 +350,10 @@ void Controller::endTurn()
 		ball[i]->moveto(591-21, firstBallArriveY);
 	}
 
+	//Move Arrow
+	arrow->setY(firstBallArriveY-12);
+
+	//Drag Objects downward
 	for(int i=0;i<targetNum;i++)
 	{
 		int tmpX = target[i]->getX();
@@ -352,4 +378,5 @@ void Controller::gameOver()
 void Controller::startTurn()
 {
 	isTurnStarted = true;
+	firstBallArriveY = -1;
 }
