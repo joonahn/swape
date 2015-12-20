@@ -3,6 +3,21 @@
 #include <stdlib.h>
 #include "../include/controller.h"
 #include "util.h"
+#include "yellowblock.h"
+#include "ballimage.h"
+#include "barimage.h"
+#include "itemblock.h"
+#include "buttonimage.h"
+
+bool Controller::isBlockThere(int x, int y)
+{
+	for(int i = 0;i<targetNum; i++)
+	{
+		if((x==target[i]->getX()) && (y==target[i]->getY()))
+			return true;
+	}
+	return false;
+}
 
 void Controller::detectCollision()
 {
@@ -135,23 +150,34 @@ void Controller::launch()
 	//not implemented here
 }
 
+//Constructor : generate initial blocks
 Controller::Controller(unsigned int * _fb)
 {
-	//Constructor : generate initial blocks
-	int blockCount=rand()%2+2;
+	//Turn is not started
 	isTurnStarted=false;
+	//Frame buffer
 	fb=_fb;
-	targetNum=blockCount;
+	//Number of Target(random)
+	targetNum=rand()%2+2;
+	//Number of initial Ball(1)
 	ballNum=1;
-	for(int i=0; i<blockCount;i++)
+
+	//Initialize member object
+	for(int i=0; i<targetNum;i++)
 	{
-		int blockPos=rand()%6;
-		target[i]=new block(222,blockPos*80,46,80,0,0,(unsigned int *)yellowblock,fb,1);
+		do
+		{
+			int blockY=(rand()%6) * 80;
+		}
+		while(isBlockThere(222, blockY));
+			
+		target[i]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,1);
 	}
-	button=new Button(650,35,46,80,0,0,buttonImg,fb);
-	ball[0]=new Ball(591-20,240,20,20,0,0,(unsigned int *)ballimage,fb);
+	button=new Button(650,35,46,80,0,0,buttonimage,fb);
+	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb);
 	bar[0]=new Bar(169,0,5,480,0,0,(unsigned int *)barimage,fb);
 	bar[1]=new Bar(590,0,5,480,0,0,(unsigned int *)barimage,fb);
+	arrow = new Arrow(543,217, 47,47,0,0,(unsigned int *)0, fb);
 }
 
 void Controller::touchHandler(int x, int y)
@@ -205,13 +231,26 @@ void Controller::update()
 		endTurn();
 }
 
+//Drag blocks downward
+//Collect balls
 void Controller::endTurn()
 {
-	arrow = new Arrow();
+	
+	arrow = new Arrow(543,firstBallArriveY, 47,47,0,0,(unsigned int *)0, fb);
 	for(int i=0;i<ballNum;i++)
 	{
-		//ball[i]->setX();
-		//ball[i]->setY();
+		ball[i]->setX(591-21);
+		ball[i]->setY(firstBallArriveY);
+	}
+	for(int i=0;i<targetNum;i++)
+	{
+		int tmpY = target[i]->getY();
+		if(tmpY==498)
+		{
+			gameOver();
+			return;
+		}
+		target[i]->setY(tmpY+46);
 	}
 	isTurnStarted = false;
 }
