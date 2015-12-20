@@ -41,6 +41,10 @@ void GameObject::move()
 	y+=vy;
 	int a=(int)x;
 	int b=(int)y;
+	if(x<0)x=0;
+	if(y<0)y=0;
+	if(x>800-width)x=800-width;
+	if(y>480-height)y=480-height;
 	for(int i=b;i<b+height;i++)
 		for(int j=a;j<a+width;j++)
 			phy_addr[i*800+j]=img[(i-b)*800+(j-a)];

@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "s3c_uart.h"
 #include "s3c6410.h"
 #include "image.h"
@@ -17,7 +16,7 @@ Image::Image(unsigned int *img, int _width, int _height, int _x, int _y, unsigne
 	for(int i = 0;i<height;i++)
 		for(int j = 0;j<width;j++)
 		{
-			phy_addr[(i+y)*800+(j+x)] = imageref[i*width+j];
+			phy_addr[(i+y)*800+(j+x)] = imageref[i*width+j] ;
 		}
 }
 

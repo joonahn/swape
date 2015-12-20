@@ -35,23 +35,23 @@ void Controller::detectCollision()
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
 					//left bottom
-					if(ball[j]->collision(3))
+					if(target[i]->collision(3))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(3);
+					ball[j]->collision(3);
 				}
 				else if (((ty + theight) > (by + bheight)) && (by>ty))
 				{
 					//left center
-					if(ball[j]->collision(2))
+					if(target[i]->collision(2))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(2);
+					ball[j]->collision(2);
 				}
 				else if (((ty + theight + 2) > by) &&(ty + theight < by + bheight))
 				{
 					//left top
-					if(ball[j]->collision(1))
+					if(target[i]->collision(1))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(1);
+					ball[j]->collision(1);
 				}
 				
 			}
@@ -61,16 +61,16 @@ void Controller::detectCollision()
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
 					//center bottom
-					if(ball[j]->collision(4))
+					if(target[i]->collision(4))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(4);
+					ball[j]->collision(4);
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
 					//center top
-					if(ball[j]->collision(0))
+					if(target[i]->collision(0))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(0);
+					ball[j]->collision(0);
 				}
 			}
 			else if ((bx<(tx + twidth)) && (bx + bwidth - 2 > tx + twidth))
@@ -79,23 +79,23 @@ void Controller::detectCollision()
 				if (((by + bheight + 2) > ty) && (by < ty))
 				{
 					//right bottom
-					if(ball[j]->collision(5))
+					if(target[i]->collision(5))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(5);
+					ball[j]->collision(5);
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
 					//right center
-					if(ball[j]->collision(6))
+					if(target[i]->collision(6))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(6);
+					ball[j]->collision(6);
 				}
 				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
 				{
 					//right top
-					if(ball[j]->collision(8))
+					if(target[i]->collision(8))
 						ball[ballNum++]=new ball()//Parameter setting here
-					target[i]->collision(8);
+					ball[j]->collision(8);
 				}
 			}
 		}

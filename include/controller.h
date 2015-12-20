@@ -23,6 +23,8 @@ private:
 	Ball * ball[BALL_MAX];
 	Bar * bar[2];
 	Arrow * arrow;
+	int targetNum;
+	int ballNum;
 	unsigned int * blockImage;
 	unsigned int * itemImage;
 	unsigned int * numberImage[10];

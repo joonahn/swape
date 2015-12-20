@@ -7,7 +7,7 @@ ball::ball(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned i
 	gameObject::gameObject(_x,_y,_width,_height,_vx,_vy,_img,_phy_addr);
 }
 ball::~ball(){}
-ball::collision(int _type)
+bool ball::collision(int _type)
 {
 	switch(_type)
 	{

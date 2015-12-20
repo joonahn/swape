@@ -11,15 +11,9 @@ bool target::collision(int _type)
 {
 	Life--;
 }
+int target::getLife(){retun Life;}
 
-class item: public target
-{
-public:
-	item();
-	item(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img);
-	virtual ~item();
-private:
-};
+
 
 item::item(){}
 item::item(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int* _phy_addr)
@@ -35,15 +29,6 @@ bool item::collision(int _type)
 }
 
 
-
-class block:: public target
-{
-public:
-	block();
-	block(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int* _phy_addr, int _Life);
-	virtual ~block();
-private:
-};
 
 block::block(){}
 block::block(int _x, int _y, int _width, int _height, int _vx, int _vy, unsigned int* _img, unsigned int* _phy_addr, int _Life)
