@@ -30,11 +30,13 @@ private:
 	unsigned int * numberImage[10];
 	unsigned int * ballImage;
 	unsigned int * buttonImage;
+	int firstBallArriveY;
 
 	//Private method
 	void detectCollision();
 	void checkLife(Target * t);
 	void launch();
+	bool isBlockThere(int x, int y);
 
 public:
 	//Inner method
