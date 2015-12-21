@@ -62,28 +62,29 @@ void Controller::detectCollision(unsigned int * _fb)
 				{
 					printf("Controller::collision\n");
 					//left bottom
-					bool blockCol=target[i]->collision(3);
+					printf("%d %d %d %d\n", bx, by, tx, ty);
+					bool blockCol=target[i]->collision(5);
 					if(blockCol)
 						getItem++;//Parameter setting here
-					ball[j]->collision(3);
+					ball[j]->collision(5);//3
 				}
 				else if (((ty + theight) > (by + bheight)) && (by>ty))
 				{
 					printf("Controller::collision\n");
 					//left center
-					bool blockCol=target[i]->collision(2);
+					bool blockCol=target[i]->collision(6);
 					if(blockCol)
 						getItem++;//Parameter setting here
-					ball[j]->collision(2);
+					ball[j]->collision(6);
 				}
 				else if (((ty + theight) > by) &&(ty + theight < by + bheight))
 				{
 					printf("Controller::collision\n");
 					//left top
-					bool blockCol=target[i]->collision(1);
+					bool blockCol=target[i]->collision(7);
 					if(blockCol)
 						getItem++;//Parameter setting here
-					ball[j]->collision(1);
+					ball[j]->collision(7);
 				}
 				
 			}
@@ -116,28 +117,28 @@ void Controller::detectCollision(unsigned int * _fb)
 				{
 					printf("Controller::collision\n");
 					//right bottom
-					bool blockCol=target[i]->collision(5);
+					bool blockCol=target[i]->collision(3);
 					if(blockCol)
-						getItem++;//Parameter setting here
+						getItem++;//Pa3rameter setting here
 					ball[j]->collision(5);
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
 					printf("Controller::collision\n");
 					//right center
-					bool blockCol=target[i]->collision(6);
+					bool blockCol=target[i]->collision(2);
 					if(blockCol)
 						getItem++;//Parameter setting here
-					ball[j]->collision(6);
+					ball[j]->collision(2);
 				}
 				else if (((ty + theight) > by) && (ty + theight < by + bheight))
 				{
 					printf("Controller::collision\n");
 					//right top
-					bool blockCol=target[i]->collision(8);
+					bool blockCol=target[i]->collision(1);
 					if(blockCol)
 						getItem++;//Parameter setting here
-					ball[j]->collision(8);
+					ball[j]->collision(1);
 				}
 			}
 			
