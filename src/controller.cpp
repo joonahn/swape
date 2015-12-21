@@ -120,7 +120,7 @@ void Controller::detectCollision(unsigned int * _fb)
 					bool blockCol=target[i]->collision(3);
 					if(blockCol)
 						getItem++;//Pa3rameter setting here
-					ball[j]->collision(5);
+					ball[j]->collision(3);
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
