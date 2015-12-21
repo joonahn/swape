@@ -46,48 +46,56 @@ bool Ball::collision(int _type)
 		float tmp;
 		srand(time(NULL));
 		case 0:
-		setY(getY()-2);
+		setY(getY()+2);
 		setVy(-getVy());
+		printf("0ㅗ\n");
 		break;
 		case 1:
-		setX(getX()-2);
-		setY(getY()-2);
+		setX(getX()+2);
+		setY(getY()+2);
 		tmp=getVx();
 		setVx(-getVy());
 		setVy(-tmp);
+		printf("1┘\n");
 		break;
 		case 2:
-		setX(getX()-2);
+		setX(getX()+2);
 		setVx(-getVx());
+		printf("2┤\n");
 		break;
 		case 3:
-		setX(getX()-2);
-		setY(getY()+2);
-		tmp=getVx();
-		setVx(getVy());
-		setVy(tmp);
-		break;
-		case 4:
-		setY(getY()+2);
-		setVy(-getVy());
-		break;
-		case 5:
-		setX(getX()+2);
-		setY(getY()+2);
-		tmp=getVx();
-		setVx(-getVy());
-		setVy(-tmp);
-		break;
-		case 6:
-		setX(getX()+2);
-		setVx(-getVx());
-		break;
-		case 7:
 		setX(getX()+2);
 		setY(getY()-2);
 		tmp=getVx();
 		setVx(getVy());
 		setVy(tmp);
+		printf("3┐\n");
+		break;
+		case 4:
+		setY(getY()-2);
+		setVy(-getVy());
+		printf("4┬\n");
+		break;
+		case 5:
+		setX(getX()-2);
+		setY(getY()-2);
+		tmp=getVx();
+		setVx(-getVy());
+		setVy(-tmp);
+		printf("5┌\n");
+		break;
+		case 6:
+		setX(getX()-2);
+		setVx(-getVx());
+		printf("6├\n");
+		break;
+		case 7:
+		setX(getX()-2);
+		setY(getY()+2);
+		tmp=getVx();
+		setVx(getVy());
+		setVy(tmp);
+		printf("7└\n");
 		break;
 	}
 	return false;
