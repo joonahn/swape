@@ -1,4 +1,6 @@
 #include "target.h"
+#include <stdio.h>
+
 
 Target::Target(){}
 Target::Target(int _x, int _y, int _width, int _height, int _vx, int _vy, 
@@ -11,6 +13,7 @@ Target::~Target(){}
 bool Target::collision(int _type)
 {
 	Life--;
+	printf("Life--\n");
 	return false;
 }
 int Target::getLife(){return Life;}
@@ -29,6 +32,7 @@ item::~item()
 bool item::collision(int _type)
 {
 	Target::collision(_type);
+	printf("Item collision\n");
 	return true;
 }
 
@@ -44,6 +48,7 @@ block::block(int _x, int _y, int _width, int _height, int _vx, int _vy,
 block::~block(){}
 bool block::collision(int _type)
 {
+	printf("Block collision\n");
 	Target::collision(_type);
 	return false;
 }

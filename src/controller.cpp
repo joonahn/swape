@@ -18,6 +18,7 @@
 #include "negthirtydeg.h"
 #include "negfourtyfivedeg.h"
 #include "negsixtydeg.h"
+#include "graphics.h"
 
 bool Controller::isBlockThere(int x, int y)
 {
@@ -29,7 +30,7 @@ bool Controller::isBlockThere(int x, int y)
 	return false;
 }
 
-void Controller::detectCollision()
+void Controller::detectCollision(unsigned int * _fb)
 {
 	//Target collision
 	for (int i = 0;i < targetNum;i++)
@@ -53,31 +54,34 @@ void Controller::detectCollision()
 
 
 			//X-axis overlap
-			if (((bx + bwidth + 2)  > tx) && (bx<tx))
+			if (((bx + bwidth)  > tx) && (bx<tx))
 			{
 
 				//Collision!
-				if (((by + bheight + 2) > ty) && (by < ty))
+				if (((by + bheight) > ty) && (by < ty))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//left bottom
-					if(target[i]->collision(3))
+					bool blockCol=target[i]->collision(3);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(3);
 				}
 				else if (((ty + theight) > (by + bheight)) && (by>ty))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//left center
-					if(target[i]->collision(2))
+					bool blockCol=target[i]->collision(2);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(2);
 				}
-				else if (((ty + theight + 2) > by) &&(ty + theight < by + bheight))
+				else if (((ty + theight) > by) &&(ty + theight < by + bheight))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//left top
-					if(target[i]->collision(1))
+					bool blockCol=target[i]->collision(1);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(1);
 				}
@@ -86,58 +90,63 @@ void Controller::detectCollision()
 			else if ((bx + bwidth < tx + twidth) && (bx>tx))
 			{
 				//Collision!
-				if (((by + bheight + 2) > ty) && (by < ty))
+				if (((by + bheight) > ty) && (by < ty))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//center bottom
-					if(target[i]->collision(4))
+					bool blockCol=target[i]->collision(4);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(4);
 				}
-				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
+				else if (((ty + theight) > by) && (ty + theight < by + bheight))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//center top
-					if(target[i]->collision(0))
+					bool blockCol=target[i]->collision(0);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(0);
 				}
 			}
-			else if ((bx<(tx + twidth)) && (bx + bwidth - 2 > tx + twidth))
+			else if ((bx<(tx + twidth)) && (bx + bwidth > tx + twidth))
 			{
 				//Collision!
-				if (((by + bheight + 2) > ty) && (by < ty))
+				if (((by + bheight) > ty) && (by < ty))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//right bottom
-					if(target[i]->collision(5))
+					bool blockCol=target[i]->collision(5);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(5);
 				}
 				else if (((ty + theight) >(by + bheight)) && (by>ty))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//right center
-					if(target[i]->collision(6))
+					bool blockCol=target[i]->collision(6);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(6);
 				}
-				else if (((ty + theight + 2) > by) && (ty + theight < by + bheight))
+				else if (((ty + theight) > by) && (ty + theight < by + bheight))
 				{
-					printf("Controller::collision");
+					printf("Controller::collision\n");
 					//right top
-					if(target[i]->collision(8))
+					bool blockCol=target[i]->collision(8);
+					if(blockCol)
 						getItem++;//Parameter setting here
 					ball[j]->collision(8);
 				}
 			}
 			
 		}
-		checkLife(target[i]);
+		checkLife(target[i], _fb);		
 	}
 }
 
-void Controller::checkLife(Target * t)
+void Controller::checkLife(Target * t, unsigned int * _fb)
 {
 	if (t->getLife() == 0)
 	{
@@ -149,6 +158,16 @@ void Controller::checkLife(Target * t)
 		}
 		if(i!=targetNum)
 		{
+			//Draw Background
+			int x = t->getX();
+			int y = t->getY();
+			int width = t->getW();
+			int height = t->getH();
+			gfx_bitblck_ext(_fb, background,
+				x, y, x+width, y+height,
+				S3CFB_HRES, S3CFB_VRES, 
+				x, y, x+width, y+height,
+				S3CFB_HRES, S3CFB_VRES);
 			delete t;
 			for(;i<targetNum-1;i++)
 			{
@@ -215,7 +234,7 @@ Controller::Controller(unsigned int * _background)
 		itemY=(rand()%6)*80;
 	}
 	while(isBlockThere(222,itemY));
-	target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background,1);
+	target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background);
 	
 	button=new Button(650,35,46,80,0,0,(unsigned int *)buttonimage,fb,background);
 	ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb,background);
@@ -288,30 +307,44 @@ void Controller::touchHandler(int x, int y)
 }
 
 //move objects by frame
-void Controller::update(unsigned int * fb)
+void Controller::update(unsigned int * _fb)
 {
-	detectCollision();
-
+	detectCollision(_fb);
+	// printf("update started\n");
 	//Move - Draw Background
 	for (int i = 0;i < targetNum;i++)
-		target[i]->move(fb);
+	{
+		if(target[i]==0)
+			printf("I am dead!\n");
+		target[i]->move(_fb);
+		// printf("target %d\n", i);
+	}
 	for (int i = 0;i < ballNum;i++)
-		ball[i]->move(fb);
+	{
+		ball[i]->move(_fb);
+		// printf("ball %d\n", i);
+	}
 	for(int i = 0;i<2;i++)
-		bar[i]->move(fb);
-	button->move(fb);
-	arrow->move(fb);
+		bar[i]->move(_fb);
+	button->move(_fb);
+	arrow->move(_fb);
 
 	//Draw
 	for(int i=0;i<targetNum;i++)
-		target[i]->draw(fb);
+	{
+		target[i]->draw(_fb);
+		// printf("target %d\n", i);
+	}
 	for(int i=0;i<ballNum;i++)
-		ball[i]->draw(fb);
+	{
+		ball[i]->draw(_fb);
+		// printf("ball %d\n", i);
+	}
 	for(int i = 0;i<2;i++)
-		bar[i]->draw(fb);
-	button->draw(fb);
+		bar[i]->draw(_fb);
+	button->draw(_fb);
 	if(!isTurnStarted)
-		arrow->draw(fb);
+		arrow->draw(_fb);
 
 
 
@@ -320,6 +353,7 @@ void Controller::update(unsigned int * fb)
 		bool isTurnEnd=true;
 		for(int i=0;i<ballNum;i++)
 		{
+			// printf("if(isTurnstarted) %d\n", i);
 			if(ball[i]->getX()!=590-20)
 			{
 				isTurnEnd=false;
@@ -332,6 +366,7 @@ void Controller::update(unsigned int * fb)
 		if(isTurnEnd)
 			endTurn();
 	}	
+	// printf("update ended\n");
 
 }
 
@@ -339,6 +374,7 @@ void Controller::update(unsigned int * fb)
 //Collect balls
 void Controller::endTurn()
 {
+	printf("endTurn Called\n");
 	turnNum++;
 	//delete arrow;
 	//Create more balls when you got items
@@ -349,7 +385,7 @@ void Controller::endTurn()
 	
 	ballNum +=getItem;
 	getItem = 0;
-
+	printf("collecting balls\n");
 	//Collect balls
 	for(int i=0;i<ballNum;i++)
 	{
@@ -357,10 +393,36 @@ void Controller::endTurn()
 		// ball[i]->setY(firstBallArriveY);
 		ball[i]->moveto(591-21, firstBallArriveY);
 	}
-
+	printf("move arrow\n");
 	//Move Arrow
 	arrow->setY(firstBallArriveY-12);
+	printf("adding targets\n");
 
+
+
+
+	int addingTargetNum = rand()%2+3;
+	int currentTargetNum = targetNum;
+	for(; targetNum < (currentTargetNum + addingTargetNum); targetNum++)
+	{
+		int blockY;
+		do
+		{
+			blockY=(rand()%6) * 80;
+		}
+		while(isBlockThere(176, blockY));
+			
+		target[targetNum]=new block(176,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,turnNum);
+	}
+	printf("adding targets2\n");
+	int itemY;
+	do
+	{
+		itemY=(rand()%6)*80;
+	}
+	while(isBlockThere(176,itemY));
+	target[targetNum++]=new item(176,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background);
+	printf("dragging objects\n");
 	//Drag Objects downward
 	for(int i=0;i<targetNum;i++)
 	{
@@ -373,34 +435,17 @@ void Controller::endTurn()
 		// target[i]->setX(tmpX+46);
 		target[i]->moveto(tmpX+46, target[i]->getY());
 	}
-	int addingTargetNum=rand()%2+3;
-	for(; targetNum < targetNum+addingTargetNum; targetNum++)
-	{
-		int blockY;
-		do
-		{
-			blockY=(rand()%6) * 80;
-		}
-		while(isBlockThere(222, blockY));
-			
-		target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,turnNum);
-	}
-	int itemY;
-	do
-	{
-		itemY=(rand()%6)*80;
-	}
-	while(isBlockThere(222,itemY));
-	target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background,1);
 
 	isTurnStarted = false;
+	printf("endTurn ends\n");
+	printf("target num:%d ballnum%d\n",targetNum, ballNum);
 }
 
 void Controller::gameOver()
 {
 	//Print gameover image
 	isTurnStarted = true;
-	printf("Game Over!!!");
+	printf("Game Over!!!\n");
 }
 
 void Controller::startTurn()

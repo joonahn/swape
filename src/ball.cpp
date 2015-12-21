@@ -64,8 +64,8 @@ bool Ball::collision(int _type)
 		setX(getX()-2);
 		setY(getY()+2);
 		tmp=getVx();
-		setVx(-getVy());
-		setVy(-tmp);
+		setVx(getVy());
+		setVy(tmp);
 		break;
 		case 4:
 		setY(getY()+2);
@@ -86,8 +86,8 @@ bool Ball::collision(int _type)
 		setX(getX()+2);
 		setY(getY()-2);
 		tmp=getVx();
-		setVx(-getVy());
-		setVy(-tmp);
+		setVx(getVy());
+		setVy(tmp);
 		break;
 	}
 	return false;

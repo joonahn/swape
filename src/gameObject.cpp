@@ -24,11 +24,13 @@ GameObject::GameObject(float _x, float _y, int _width, int _height, float _vx, f
 }
 GameObject::~GameObject()
 {
+	/*
 	gfx_bitblck_ext(fb, background,
 		ppx, ppy, ppx+width, ppy+height,
 		S3CFB_HRES, S3CFB_VRES, 
 		ppx, ppy, ppx+width, ppy+height,
 		S3CFB_HRES, S3CFB_VRES);
+		*/
 }
 void GameObject::setX(float _x){x=_x;}
 void GameObject::setY(float _y){y=_y;}

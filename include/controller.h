@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define TARGET_MAX 20
-#define BALL_MAX 20
+#define TARGET_MAX 50
+#define BALL_MAX 50
 #define MANGO_WIDTH 800
 #define MANGO_HEIGHT 480
 
@@ -36,8 +36,8 @@ private:
 	int firstBallArriveY;
 
 	//Private method
-	void detectCollision();
-	void checkLife(Target * t);
+	void detectCollision(unsigned int * fb);
+	void checkLife(Target * t, unsigned int * _fb);
 	void launch();
 	bool isBlockThere(int x, int y);
 
