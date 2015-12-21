@@ -19,6 +19,10 @@
 #include "negfourtyfivedeg.h"
 #include "negsixtydeg.h"
 #include "graphics.h"
+#include "jkim.h"
+
+extern void timer3_on();
+extern void timer3_off();
 
 bool Controller::isBlockThere(int x, int y)
 {
@@ -159,17 +163,10 @@ void Controller::checkLife(Target * t, unsigned int * _fb)
 		}
 		if(i!=targetNum)
 		{
-			//Draw Background
-			int x = t->getX();
-			int y = t->getY();
-			int width = t->getW();
-			int height = t->getH();
-			gfx_bitblck_ext(_fb, background,
-				x, y, x+width, y+height,
-				S3CFB_HRES, S3CFB_VRES, 
-				x, y, x+width, y+height,
-				S3CFB_HRES, S3CFB_VRES);
-			delete t;
+			//move t to graveyard
+			graveyard[graveNum] = t;
+			graveyardYear[graveNum++] = 2;
+			//delete t
 			for(;i<targetNum-1;i++)
 			{
 				target[i]=target[i+1];
@@ -183,32 +180,31 @@ void Controller::checkLife(Target * t, unsigned int * _fb)
 void Controller::launch()
 {
 	printf("launch start!\n");
-	float tangent=arrow->getTangent();
-	tangent *=-1;
-	int speed=3;
 	startTurn();
-	for(int i=0; i<ballNum;i++)
-	{
-		while(1)
-		{
-			if(timeCount==0)
-				break;
-		}
-		ball[i]->setVy(speed*Q_rsqrt(1+tangent*tangent)*tangent);
-		// ball[i]->setVy((((int)tangent)>0)?(speed*Q_rsqrt(1+tangent*tangent)*tangent * (-1)):(speed*Q_rsqrt(1+tangent*tangent)*tangent));//sin
-		ball[i]->setVx(speed*Q_rsqrt(1+tangent*tangent) * (-1));//cos
-		printf("Vx, Vy : %d %d\n", ((int)ball[i]->getVx()), ((int)ball[i]->getVy()));
-		printf("tangent: %d %f \n",(int)tangent, tangent);
-
-	}
 	//not implemented here
+	timer3_on();
 }
 
 void Controller::eachTime()
 {
-	timeCount++;
-	if(timeCount==30)
-		timeCount=0;
+	static int launchedBall = 0;
+	int speed = 7;
+	float tangent = arrow->getTangent();
+	tangent *=-1;
+
+	if(launchedBall==ballNum)
+	{
+		timer3_off();
+		launchedBall = 0;
+	}
+	else
+	{
+		ball[launchedBall]->setVy(speed*Q_rsqrt(1+tangent*tangent)*tangent);
+		ball[launchedBall]->setVx(speed*Q_rsqrt(1+tangent*tangent) * (-1));
+		printf("Vx, Vy : %d %d\n", ((int)ball[launchedBall]->getVx()), ((int)ball[launchedBall]->getVy()));
+		printf("tangent: %d %f \n",(int)tangent, tangent);
+		launchedBall++;
+	}
 }
 
 //Constructor : generate initial blocks
@@ -228,7 +224,8 @@ Controller::Controller(unsigned int * _background)
 	background = _background;
 	turnNum=1;
 	timeCount=0;
-
+	graveNum = 0;
+	isGameover = false;
 	
 	//Initialize member object
 	for(targetNum = 0;targetNum < initialTargetNum; targetNum++)
@@ -323,68 +320,108 @@ void Controller::touchHandler(int x, int y)
 //move objects by frame
 void Controller::update(unsigned int * _fb)
 {
-	timeCount++;
-	if(timeCount==30)
-		timeCount=0;
-	detectCollision(_fb);
-	// printf("update started\n");
-	//Move - Draw Background
-	for (int i = 0;i < targetNum;i++)
+	if(!isGameover)
 	{
-		if(target[i]==0)
-			printf("I am dead!\n");
-		target[i]->move(_fb);
-		// printf("target %d\n", i);
-	}
-	for (int i = 0;i < ballNum;i++)
-	{
-		ball[i]->move(_fb);
-		// printf("ball %d\n", i);
-	}
-	for(int i = 0;i<2;i++)
-		bar[i]->move(_fb);
-	button->move(_fb);
-	arrow->move(_fb);
+		printf("detect collision\n");
+		detectCollision(_fb);
+		// printf("update started\n");
 
-	//Draw
-	for(int i=0;i<targetNum;i++)
-	{
-		target[i]->draw(_fb);
-		// printf("target %d\n", i);
-	}
-	for(int i=0;i<ballNum;i++)
-	{
-		ball[i]->draw(_fb);
-		// printf("ball %d\n", i);
-	}
-	for(int i = 0;i<2;i++)
-		bar[i]->draw(_fb);
-	button->draw(_fb);
-	if(!isTurnStarted)
-		arrow->draw(_fb);
+
+		//Move - Draw Background
+		printf("targets move\n");
+		for (int i = 0;i < targetNum;i++)
+		{
+			if(target[i]==0)
+				printf("I am dead!\n");
+			target[i]->move(_fb);
+			// printf("target %d\n", i);
+		}
+		printf("balls move\n");
+		for (int i = 0;i < ballNum;i++)
+		{
+			ball[i]->move(_fb);
+			// printf("ball %d\n", i);
+		}
+		printf("bars move\n");
+		for(int i = 0;i<2;i++)
+			bar[i]->move(_fb);
+		printf("button move\n");
+		button->move(_fb);
+		printf("arrow move\n");
+		arrow->move(_fb);
+		printf("target draw\n");
 
 
 
-	if(isTurnStarted)
-	{
-		bool isTurnEnd=true;
+		//Draw
+		for(int i=0;i<targetNum;i++)
+		{
+			target[i]->draw(_fb);
+			// printf("target %d\n", i);
+		}
+		printf("ball draw\n");
 		for(int i=0;i<ballNum;i++)
 		{
-			// printf("if(isTurnstarted) %d\n", i);
-			if(ball[i]->getX()!=590-20)
+			ball[i]->draw(_fb);
+			// printf("ball %d\n", i);
+		}
+		printf("bar draw\n");
+		for(int i = 0;i<2;i++)
+			bar[i]->draw(_fb);
+		printf("button draw\n");
+		button->draw(_fb);
+		printf("arrow draw\n");
+		if(!isTurnStarted)
+			arrow->draw(_fb);
+
+		//Draw background of grave blocks
+		for(int i = 0;i < graveNum;i++)
+		{
+			graveyard[i]->move(_fb);
+			graveyardYear[i]--;
+			if(graveyardYear[i]==0)
 			{
-				isTurnEnd=false;
-			}
-			else if(firstBallArriveY==-1)
-			{
-				firstBallArriveY = ball[i]->getY();
+				delete graveyard[i];
+				for(int j = i;j<(graveNum-1);j++)
+				{
+					graveyard[j] = graveyard[j+1];
+					graveyardYear[j] = graveyardYear[j+1];
+				}
+				graveNum--;
+				i--;
 			}
 		}
-		if(isTurnEnd)
-			endTurn();
-	}	
-	// printf("update ended\n");
 
+		printf("turnEndcheck isTurnStarted : %d\n", (int)isTurnStarted);
+		if(isTurnStarted)
+		{
+			bool isTurnEnd=true;
+			for(int i=0;i<ballNum;i++)//ballnum
+			{
+				// printf("if(isTurnstarted) %d\n", i);
+				if(ball[i]->getX()<590-20)
+				{
+					isTurnEnd=false;
+				}
+				else if(firstBallArriveY==-1)
+				{
+					firstBallArriveY = ball[i]->getY();
+				}
+			}
+			if(isTurnEnd)
+				endTurn();
+		}
+		else
+		{
+			printf("isTurnStarted is False!\n");
+		}
+		//printf("update ended\n");
+	}
+	else
+	{
+		//gameoverImage->move(_fb);
+		gameoverImage->draw(_fb);
+	}
 }
 
 //Drag blocks downward
@@ -398,6 +435,7 @@ void Controller::endTurn()
 	for(int i=0;i<getItem;i++)
 	{
 		ball[ballNum + i] = new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb, background);
+		printf("getItem : %d i: %d\n", getItem, i);
 	}
 	
 	ballNum +=getItem;
@@ -408,7 +446,7 @@ void Controller::endTurn()
 	{
 		// ball[i]->setX(591-21);
 		// ball[i]->setY(firstBallArriveY);
-		ball[i]->moveto(591-21, firstBallArriveY);
+		ball[i]->moveto(589-20, firstBallArriveY);
 	}
 	printf("move arrow\n");
 	//Move Arrow
@@ -458,14 +496,17 @@ void Controller::endTurn()
 void Controller::gameOver()
 {
 	//Print gameover image
-	for(int i=0;i<targetNum;i++)
-		delete target[i];
-	delete button;
-	for(int i=0;i<ballNum;i++)
-		delete ball[ballNum];
-	delete bar[0];
-	delete bar[1];
-	delete arrow;
+	// for(int i=0;i<targetNum;i++)
+	// 	delete target[i];
+	// delete button;
+	// for(int i=0;i<ballNum;i++)
+	// 	delete ball[ballNum];
+	// delete bar[0];
+	// delete bar[1];
+	// delete arrow;
+	isGameover = true;
+	//GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb, unsigned int * _background);
+	gameoverImage = new GameObject(174,0,416,480,0,0,(unsigned int *)jkim, fb, background);
 	printf("Game Over!!!\n");
 }
 

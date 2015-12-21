@@ -48,7 +48,10 @@ void frame_init(void) {
 		x = i % S3CFB_HRES;
 		y = i / S3CFB_HRES;
 
-		background[i] = (((x >> 5) & 1) != ((y >> 5) & 1)) ? 0xFFFFFFFF : 0xFFD7D7D7;
+		if(x>=169 && x<=595)
+			background[i] = 0xFFFFFFFF;
+		else
+			background[i] = (((x >> 5) & 1) != ((y >> 5) & 1)) ? 0xFFFFFFFF : 0xFFD7D7D7;
 		fb_odd[i] = background[i];
 		fb_even[i] = background[i];
 	}
@@ -171,5 +174,4 @@ static void implement_your_drawing_here(unsigned *fb) {
 	*/
 	
 	controller->update(fb);
-
 }

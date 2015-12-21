@@ -4,6 +4,7 @@
 #include <s3c_uart.h>
 #include <s3c6410.h>
 #include "frame.h"
+#include "controller.h"
 
 #define VIC0IRQSTATUS_REG __REG(ELFIN_VIC0_BASE_ADDR + 0x0)
 #define VIC0INTSELECT_REG __REG(ELFIN_VIC0_BASE_ADDR + 0xc)
@@ -32,7 +33,6 @@
 #define BIT_TIMER3_EN (1<<3)
 #define BIT_TIMER4_EN (1<<4)
 
-unsigned int timer1_isr_call_count = 0;
 extern Controller* controller;
 
 //Interrupt Service Routine for Timer1
@@ -43,7 +43,6 @@ void timer2InterruptServiceRoutine(void){
   temp = VIC0INTENABLE_REG;
   VIC0INTENCLEAR_REG = 0xffffffff;
 
-  timer1_isr_call_count++;
   // printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
 
   frame_service();
@@ -65,7 +64,6 @@ void timer3InterruptServiceRoutine(void){
   temp = VIC0INTENABLE_REG;
   VIC0INTENCLEAR_REG = 0xffffffff;
 
-  timer1_isr_call_count++;
   //printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
   controller->eachTime();
 
@@ -103,25 +101,33 @@ void mango_timer_init(void){
   //Set address of interrupt handler for timer1
   VIC0VECTADDR25 = (unsigned)timer2InterruptServiceRoutine;
 
+}
 
-
+void timer3_on()
+{
   /******TIMER3 *******/
   //One interrupt per one second
-  TCNTB3_REG = 800;
+  TCNTB3_REG = 3200;
 
-  //Timer2 Manual update
+  //Timer3 Manual update
   TCON_REG |= (1<<17); 
-  //Timer2 Auto-reload on & Timer2 on
+  //Timer3 Auto-reload on & Timer2 on
   TCON_REG = (TCON_REG & ~(0xf<<16)) | (1<<19) | (1<<16);
   
 
-  //Enable interrupt for timer2
+  //Enable interrupt for timer3
   VIC0INTENABLE_REG |= BIT_TIMER3;
   TINT_CSTAT_REG |= BIT_TIMER3_EN;
 
-  //Set address of interrupt handler for timer1
+  //Set address of interrupt handler for timer3
   VIC0VECTADDR27 = (unsigned)timer3InterruptServiceRoutine;
+}
 
+void timer3_off()
+{
+  VIC0INTENABLE_REG &= ~(BIT_TIMER3);
+  TINT_CSTAT_REG &= ~(BIT_TIMER3_EN);
+  VIC0VECTADDR27 = 0;
 }
 
 void interrupt_reset(void){

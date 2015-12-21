@@ -1,8 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define TARGET_MAX 50
-#define BALL_MAX 50
+#define TARGET_MAX 70
+#define BALL_MAX 70
 #define MANGO_WIDTH 800
 #define MANGO_HEIGHT 480
 
@@ -11,6 +11,7 @@
 #include "bar.h"
 #include "ball.h"
 #include "arrow.h"
+#include "gameObject.h"
 
 class Controller
 {
@@ -20,10 +21,14 @@ private:
 	unsigned int * background;
 	unsigned int * fb;
 	Target * target[TARGET_MAX];
+	Target * graveyard[TARGET_MAX];
+	int graveyardYear[TARGET_MAX];
+	GameObject * gameoverImage;
 	Button * button;
 	Ball * ball[BALL_MAX];
 	Bar * bar[2];
 	Arrow * arrow;
+	int graveNum;
 	int targetNum;
 	int ballNum;
 	int getItem;
@@ -35,6 +40,7 @@ private:
 	unsigned int * ballImage;
 	unsigned int * buttonImage;
 	int firstBallArriveY;
+	bool isGameover;
 
 	//Private method
 	void detectCollision(unsigned int * fb);

@@ -30,7 +30,7 @@ OBJ=\
 
 
 CFLAGS64=-DCONFIG_MANGO_64
-COMPILE64=$(CC) -c -Wall -g -o "$(OUTDIR)/$(*F).o" $(CFG_INC) $(CFLAGS64) $<
+COMPILE64=$(CC) -c -Wall -g -O3 -o "$(OUTDIR)/$(*F).o" $(CFG_INC) $(CFLAGS64) $<
 LINK64=$(CC) -g -o "$(OUTFILE)" $(OBJ) -e main -Ttext=0x50080000
 COPY64=\
 	$(CP) $(OUTFILE) $(OUTDIR_BIN)/

@@ -74,6 +74,7 @@ void GameObject::draw(unsigned int *_fb)
 	//image drawing
 	gfx_bitblck(_fb,img, S3CFB_HRES, S3CFB_VRES, width, height,(int)x,(int)y);
 }
+
 bool GameObject::collision(int _type){return false;}
 
 void GameObject::moveto(int _x, int _y)
