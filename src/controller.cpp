@@ -188,14 +188,26 @@ void Controller::launch()
 	startTurn();
 	for(int i=0; i<ballNum;i++)
 	{
+		while(1)
+		{
+			if(timeCount==0)
+				break;
+		}
 		ball[i]->setVy(speed*Q_rsqrt(1+tangent*tangent)*tangent);
-
 		// ball[i]->setVy((((int)tangent)>0)?(speed*Q_rsqrt(1+tangent*tangent)*tangent * (-1)):(speed*Q_rsqrt(1+tangent*tangent)*tangent));//sin
 		ball[i]->setVx(speed*Q_rsqrt(1+tangent*tangent) * (-1));//cos
 		printf("Vx, Vy : %d %d\n", ((int)ball[i]->getVx()), ((int)ball[i]->getVy()));
 		printf("tangent: %d %f \n",(int)tangent, tangent);
+
 	}
 	//not implemented here
+}
+
+void Controller::eachTime()
+{
+	timeCount++;
+	if(timeCount==30)
+		timeCount=0;
 }
 
 //Constructor : generate initial blocks
@@ -214,6 +226,7 @@ Controller::Controller(unsigned int * _background)
 	//Set background
 	background = _background;
 	turnNum=1;
+	timeCount=0;
 
 	
 	//Initialize member object
@@ -309,6 +322,9 @@ void Controller::touchHandler(int x, int y)
 //move objects by frame
 void Controller::update(unsigned int * _fb)
 {
+	timeCount++;
+	if(timeCount==30)
+		timeCount=0;
 	detectCollision(_fb);
 	// printf("update started\n");
 	//Move - Draw Background
@@ -398,9 +414,6 @@ void Controller::endTurn()
 	arrow->setY(firstBallArriveY-12);
 	printf("adding targets\n");
 
-
-
-
 	int addingTargetNum = rand()%2+3;
 	int currentTargetNum = targetNum;
 	for(; targetNum < (currentTargetNum + addingTargetNum); targetNum++)
@@ -444,7 +457,14 @@ void Controller::endTurn()
 void Controller::gameOver()
 {
 	//Print gameover image
-	isTurnStarted = true;
+	for(int i=0;i<targetNum;i++)
+		delete target[i];
+	delete button;
+	for(int i=0;i<ballNum;i++)
+		delete ball[ballNum];
+	delete bar[0];
+	delete bar[1];
+	delete arrow;
 	printf("Game Over!!!\n");
 }
 

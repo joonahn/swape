@@ -28,6 +28,7 @@ private:
 	int ballNum;
 	int getItem;
 	int turnNum;
+	int timeCount;
 	unsigned int * blockImage;
 	unsigned int * itemImage;
 	unsigned int * numberImage[10];
@@ -49,6 +50,7 @@ public:
 	void endTurn();
 	void gameOver();
 	void startTurn();
+	void eachTime();
 	
 };
 
