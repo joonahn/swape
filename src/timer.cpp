@@ -33,6 +33,7 @@
 #define BIT_TIMER4_EN (1<<4)
 
 unsigned int timer1_isr_call_count = 0;
+extern Controller* controller;
 
 //Interrupt Service Routine for Timer1
 void timer2InterruptServiceRoutine(void){
@@ -66,7 +67,7 @@ void timer3InterruptServiceRoutine(void){
 
   timer1_isr_call_count++;
   //printf ("timer2InterruptSeviceRoutine is called %d times\n", timer1_isr_call_count);
-
+  controller->eachTime();
 
 
   //Reset interrupt status
