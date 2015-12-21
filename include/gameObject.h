@@ -22,7 +22,7 @@ public:
 	float getVy();
 	void move(unsigned int *fb);
 	void moveto(int x, int y);
-	void draw(unsigned int *fb);
+	virtual void draw(unsigned int *fb);
 	virtual bool collision(int);
 private:
 	float px;

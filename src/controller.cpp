@@ -20,6 +20,7 @@
 #include "negsixtydeg.h"
 #include "graphics.h"
 #include "jkim.h"
+#include "restart.h"
 
 extern void timer3_on();
 extern void timer3_off();
@@ -315,6 +316,58 @@ void Controller::touchHandler(int x, int y)
 			}
 		}
 	}
+
+	//Restart Button pressed
+	if(isGameover)
+	{
+		float data1 = button->getX();
+		float data2 = button->getX() + button->getW();
+		if (x > data1 && x < data2)
+		{
+			printf("x>button->getX\n");
+			if (y > button->getY() && y < button->getY() + button->getH())
+			{
+				button->setImg((unsigned int *)buttonimage);
+				//Print gameover image
+				for(int i=0;i<targetNum;i++)
+					delete target[i];
+				for(int i=0;i<ballNum;i++)
+					delete ball[i];
+				ballNum = 1;
+
+				//Initialize
+				int initialTargetNum = rand()%2+2;
+				turnNum=1;
+				timeCount=0;
+				graveNum = 0;
+				isGameover = false;
+				getItem = 0;
+				
+				//Initialize member object
+				for(targetNum = 0;targetNum < initialTargetNum; targetNum++)
+				{
+					int blockY;
+					do
+					{
+						blockY=(rand()%6) * 80;
+					}
+					while(isBlockThere(222, blockY));
+						
+					target[targetNum]=new block(222,blockY,46,80,0,0,(unsigned int *)yellowblock,fb,background,turnNum);
+				}
+				int itemY;
+				do
+				{
+					itemY=(rand()%6)*80;
+				}
+				while(isBlockThere(222,itemY));
+				target[targetNum++]=new item(222,itemY,46,80,0,0,(unsigned int*)itemblock,fb,background);
+				ball[0]=new Ball(589-20,240,20,20,0,0,(unsigned int *)ballimage,fb,background);
+				
+				isGameover = !isGameover;
+			}
+		}
+	}
 }
 
 //move objects by frame
@@ -421,6 +474,7 @@ void Controller::update(unsigned int * _fb)
 	{
 		//gameoverImage->move(_fb);
 		gameoverImage->draw(_fb);
+		button->draw(_fb);
 	}
 }
 
@@ -507,6 +561,7 @@ void Controller::gameOver()
 	isGameover = true;
 	//GameObject(float _x, float _y, int _width, int _height, float _vx, float _vy, unsigned int* _img, unsigned int* _fb, unsigned int * _background);
 	gameoverImage = new GameObject(174,0,416,480,0,0,(unsigned int *)jkim, fb, background);
+	button->setImg((unsigned int *)restart);
 	printf("Game Over!!!\n");
 }
 
